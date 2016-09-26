@@ -8,7 +8,7 @@
   "keywords" : "msamricth msamricth",
   "match" : "msamricth",
   "replies" : [
-    "some reply. Can reference parts of the tweet like [user.screen_name] or regex matches like $1"
+    "some reply. Can reference parts of the tweet like @[user.screen_name] or regex matches like $1"
   ],
   "max_replies_per_minute" : 6,
   "in_reply_to" : true
