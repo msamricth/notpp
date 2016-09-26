@@ -17,7 +17,7 @@ client.stream('statuses/filter', {track: word}, function(stream) {
   stream.on('data', function(tweet) {
 
 
-    var array = tweet.text.split('block ')
+    var array = tweet.text.split('msamricth')
     isItChain = array[1][0] + array[1][1] + array[1][2]+array[1][3]+array[1][4]
     if(isItChain == 'chain') { //We have found block chain
 
@@ -40,3 +40,4 @@ client.stream('statuses/filter', {track: word}, function(stream) {
     throw error;
   });
 });
+
