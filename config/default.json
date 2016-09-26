@@ -5,8 +5,8 @@
       "access_token_key" : "768831126097887232-osNkiSROJsKkNKtuNgpWzKbC1ohJURk",
       "access_token_secret" : "kcgTlbf5SwYUzYpbPgroKlQn0EL42T0st0LxFHG5scwcK"
   },
-  "keywords" : "msamricth msamricth",
-  "match" : "msamricth",
+  "keywords" : "msamricth @msamricth",
+  "match" : "@msamricth",
   "replies" : [
     "&#64;[user.screen_name] some reply. Can reference parts of the tweet like @[user.screen_name] or regex matches like $1"
   ],
