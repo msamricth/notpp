@@ -1,19 +1,24 @@
 {
-  "name": "blockchainbot",
-  "version": "1.0.0",
-  "description": "Alert twitter users that they typed block chain when they meant blockchain.",
-  "main": "bot.js",
+  "name": "replybot",
+  "version": "0.0.3",
+  "description": "A bot for replying to tweets",
+  "main": "reply.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/kiaraRobles/bot.git"
+    "url": "git://github.com/jesseditson/reply.git"
   },
-  "author": "Kiara Robles",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/kiaraRobles/bot/issues"
-  },
-  "homepage": "https://github.com/kiaraRobles/bot"
+  "keywords": [
+    "twitter",
+    "reply"
+  ],
+  "author": "Jesse Ditson <jesse.ditson@gmail.com>",
+  "license": "BSD",
+  "dependencies": {
+    "config-heroku": "~0.1.1a",
+    "request": "~2.16.6",
+    "ntwitter": "~0.5.0"
+  }
 }
