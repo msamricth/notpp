@@ -8,7 +8,7 @@
   "keywords" : "msamricth @msamricth",
   "match" : "@msamricth",
   "replies" : [
-    "yo [user.screen_name] or some shit"
+    "yo @[user.screen_name] or some shit"
   ],
   "max_replies_per_minute" : 6,
   "in_reply_to" : true
