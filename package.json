@@ -1,24 +1,22 @@
 {
-  "name": "replybot",
-  "version": "0.0.3",
-  "description": "A bot for replying to tweets",
-  "main": "reply.js",
+  "name": "twitter-reply-bot",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": "4.4.1"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/jesseditson/reply.git"
-  },
-  "keywords": [
-    "twitter",
-    "reply"
-  ],
-  "author": "Jesse Ditson <jesse.ditson@gmail.com>",
-  "license": "BSD",
+  "main": "server.js",
   "dependencies": {
-    "config-heroku": "~0.1.1a",
-    "request": "~2.16.6",
-    "ntwitter": "~0.5.0"
-  }
+    "bluebird": "3.3.4",
+    "express": "4.13.4",
+    "lodash": "4.6.1",
+    "moment": "2.12.0",
+    "mongodb": "2.1.11",
+    "request-promise": "2.0.1",
+    "twitter": "1.2.5"
+  },
+  "devDependencies": {}
 }
