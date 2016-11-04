@@ -1,59 +1,123 @@
-# Twitter Reply Bot
+reply
+=====
 
-A Twitter bot which finds tweets that match your search terms and replies with responses you prepared. Useful for engaging with new people on a certain topic. **But [don't spam](#dont-spam)!**
+A bot for replying to twitter posts that match criteria
 
-## Custom Set Up
+##Usage:
 
-We start with the non-technical configuration and finish with the technical set up. If you are not a developer just work on the first steps and give the rest to a developer.
+####Prerequisites:
 
-### 1. Define the search terms for tweets the bot shall reply to
+Create a twitter app:
 
-The bot searches for tweets like you would do. There is no magic going on. What you need to do is to go to [Twitter](https://twitter.com) and enter something into the search box. E.g. enter ["starwars"](https://twitter.com/search?f=tweets&vertical=news&q=starwars&src=typd), hit enter, and then make sure you select the "Live" tab. Per default, the Twitter website selects the "Top" tab, which is only a selection of all tweets. The "Live" tab shows all matching tweets which is what the bot sees, too.
+- go to https://apps.twitter.com/
+- sign in with an account or create one (WARNING: YOU MAY FLOOD TWITTER WITH TWEETS FROM THIS ACCOUNT. BE CAREFUL!)
+- add a new application
+- go to the "Keys and Tokens" page and generate an access token in the "Your access token" section
 
-Look through the search results and make sure that there appears no tweet to which the bot shall not reply to. **This is the tricky part.** The bot is dumb. So that it doesn't make anything stupid you have to come up with search terms that only find tweets you are comfortable with replying to. For that reason the [advanced search](https://twitter.com/search-advanced) will be very useful.
+you'll use the tokens from this page later. Keep it open.
 
-If your search terms find a lot of tweets don't worry. At a later step you will be able to tell the bot how soon it is allowed to send another reply after it just sent one. If the search terms find more tweets than the bot is allowed to reply to, it will select one randomly and ignore the rest.
+####Local Setup:
 
-### 2. Prepare the responses
+clone this repo.
 
-Each reply will consist of a text and an image. Prepare as many responses as you like. The bot will use one after the other. And if it reaches the end it will start with the first response again.
+add a file called `runtime.json` to the `config` directory.
 
----
+put a config in it like this:
 
-This concludes the non-technical part.
+    {
+      "twitter" : {
+        "consumer_key" : "<your consumer key>",
+        "consumer_secret" : "<your consumer key>",
+        "access_token_key" : "<your access token>",
+        "access_token_secret" : "<your access token secret>"
+      },
+      "keywords" : "words to match in tweet",
+      "match" : "a string or regex. (capture groups are allowed)",
+      "replies" : [
+        "some reply. Can reference parts of the tweet like [user.screen_name] or regex matches like $1"
+      ],
+      "max_replies_per_minute" : 6,
+      "in_reply_to" : true
+    }
 
----
+This should be somewhat self explanatory, here's the idea:
 
-### 3. Configure the bot according to the results of the previous steps
+when a tweet matches the keywords (as detailed [here](https://dev.twitter.com/docs/streaming-apis/parameters#track "Twitter Track Parameter Docs")), it will be tested against the "match" param, and replied to if it passes.
 
-- Clone this repository to your desktop
-- In the `settings.json` set the search terms as defined in step 1 at `bot_parameters.query`. Also set `bot_parameters.lang` to filter the language. The search field on the Twitter website already shows the search terms in the format which you need to use for `bot_parameters.query`. You only need to escape `"` to `\"`. For special cases have a look at the [query operators documentation](https://dev.twitter.com/rest/public/search).
-- The prepared responses go into `responses/list.json`. Since this repository contains sample data this should be self explanatory. `[user]` will be replaced with the Twitter handle to whom the reply is sent.
-- In the `settings.json` change the parameter `bot_parameters.replyOnceEveryXMinutes` as needed. This ensures that a reply is sent not more than once every X minutes. This basically limits the bot from spamming to much.
-- In the `settings.json` change the parameter `bot_parameters.replyToTweetsAtLeastXMinutesOld` as needed. This ensures that a reply is sent not too soon after the original tweet was sent. If a user tweets something and the bot would reply within seconds then it would be more likely that the user realizes that the response was automated and maybe reports the bot to Twitter.
+**match** can be a string, or a regex. All regexes are case insensitive, but you can specify capture groups to use in your replies if you want.
 
-### 4. Configure the Twitter credentials
+**replies** is an array. A random reply will be selected from this array, parsed, and tweeted by the authenticating account.
+**replies** will replace `$n` items with matches from the original tweet.
+**replies** can contain square-bracket surrounded attributes to pick from the original tweet too. You can see the options in the example response [here](https://dev.twitter.com/docs/api/1.1/get/statuses/show/%3Aid "Twitter Show Status Docs"). For instance (and probably the most useful), you could at-tweet a user by adding `@[user.screen_name]` to the beginning of a reply.
 
-In the `settings.json` fill the parameters under `twitter_api` according to the TODOs explained there.
+**max_replies_per_minute** is there to help you not hit the API limits. 1000/day is the global limit. This will only tweet when it can though, so if there is ALWAYS a tweet to respond to queueing up, the max would be 0.695. However, this is unlikely for normal uses, so your number could be considerably higher. Default is one per minute.
 
-### 5. Configure the database
+**in_reply_to** will mark the tweet as being in reply to the tweet. This will cause twitter to show it in the conversation view. Turn it off if you're just randomly tweeting.
 
-To not spam a single user the bot maintains a database with Twitter users to whom it already sent a response. For that a MongoDB is required and the `database` parameters in the `settings.json` need to be filled accordingly.
+####Heroku Deployment:
 
-### 6. Install and run
+To make it even easier to spam the world, you can deploy this to a heroku app with very little setup:
 
-The bot runs on node.js. Install node.js v4 on your system. Then execute `npm install` in the project folder and finally execute `node server.js` to run the bot.
+copy or create a `heroku.json` file inside the `config` directory. Same params as above.
 
-## Don't spam!
+Install the [Heroku Toolbelt](https://toolbelt.heroku.com/)
 
-You have to be aware that you may violate Twitters [Developer Agreement and Policy](https://dev.twitter.com/overview/terms/agreement-and-policy), [Automation Rules](https://support.twitter.com/articles/76915-automation-rules-and-best-practices) and/or [Twitter Rules](https://support.twitter.com/articles/18311-the-twitter-rules) by using this bot - depending on how you configure it. If you don't configure it carefully [your app will get suspended](https://support.twitter.com/articles/72585) or even your account may get closed down by Twitter.
+install the `config-heroku` command line:
 
-The bot already contains a few mechanisms to prevent abuse. One mechanism is the user database that makes sure that a single user never gets more that one reply from the bot. If a single user would get multiple replies she would easily think of it as spam and report the bot to Twitter. Also all responses are designed to contain an image. This image shall be used to make the reply valuable - e.g. a picture that lightens the mood. However, the bot could also be configured to sent blunt ads. Don't do this!
+    npm install -g config-heroku
 
-A rule of thumb is to prepare the responses with a nice conversation starter in mind. Not everyone will respond but with those who do you can continue the conversation in person.
+type `heroku create <your clever app name>` into your terminal in the same directory as this app.
 
-## License (ISC)
+type `config-heroku save`, and when prompted (after confirming your config) enter `y` and hit enter *twice* (sorry, that's a bug...)
 
-In case you never heard about the [ISC license](http://en.wikipedia.org/wiki/ISC_license) it is functionally equivalent to the MIT license.
+type `git push heroku`
 
-See the [LICENSE file](LICENSE) for details.
+Lastly, you'll want to add the newrelic standard addon - not for the monitoring, but it'll ping your app twice a minute. This will prevent Heroku from idling your app and causing the dyno to spin down (and all your tweets to stop):
+
+`heroku addons:add newrelic:standard`
+
+now your annoying twitter bot is running in the cloud like a boss. If you're interested in what it's doing you can type `heroku logs -t`, and you'll get streaming logs of what it's been up to.
+
+
+####Notes:
+
+This project was inspired by a tweet by @startupljackson. I don't know him, but somebody retweeted it and I thought it was a good idea.
+
+<blockquote class="twitter-tweet"><p>Who wants to build me a bot? @<a href="https://twitter.com/zomfgmayor">zomfgmayor</a> will reply to those "I just ousted X as mayor of Y" tweets w "Nobody gives a shit, douche nozzle."</p>&mdash; Startup L. Jackson (@StartupLJackson) <a href="https://twitter.com/StartupLJackson/status/314180753573416960">March 20, 2013</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+Here's the config to use this lib to do what is described in that tweet:
+
+    {
+      "twitter" : {
+        "consumer_key" : "<your consumer key>",
+        "consumer_secret" : "<your consumer key>",
+        "access_token_key" : "<your access token>",
+        "access_token_secret" : "<your access token secret>"
+      },
+      "keywords" : "I just ousted",
+      "match" : "I just ousted @([\\w]+) as the mayor of (.+?) on @foursquare!",
+      "replies" : [
+        "@[user.screen_name] Nobody Gives a shit, douchenozzle."
+      ]
+    }
+
+As of this writing, the bot described above is running under the twitter account [@nobodygivesshit](https://twitter.com/nobodygivesshit).
+
+Startup L. Jackson, if you want the keys they're yours, or I'll shut that one down if you want to set up a different reply repo.
+
+#### License:
+
+You're free to use this for anything you want as long as you follow these rules:
+
+    Don't be a dick
+
+####Bugs:
+
+Bugs can be filed here in github, or by contacting me directly:
+
+#####Jesse Ditson
+
+#####(twitter) @jesseditson
+
+#####(email) jesse.ditson@gmail.com

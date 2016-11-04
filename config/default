@@ -1,0 +1,15 @@
+{
+  "twitter" : {
+      "consumer_key":"ceooAEZ4wBFGBDTkoGBzMxBjN",
+      "consumer_secret":"	pP7r7osttnZnx60PEilf6aqHzuKjs6Lzd3uXIqy8X0EXNLiyJ6",
+      "access_token_key":"768831126097887232-osNkiSROJsKkNKtuNgpWzKbC1ohJURk",
+      "access_token_secret":"kcgTlbf5SwYUzYpbPgroKlQn0EL42T0st0LxFHG5scwcK"
+  },
+  "keywords" : "msamricth @msamricth",
+  "match" : "msamricth",
+  "replies" : [
+    "some reply. Can reference parts of the tweet like [user.screen_name] or regex matches like $1"
+  ],
+  "max_replies_per_minute" : 6,
+  "in_reply_to" : true
+}
